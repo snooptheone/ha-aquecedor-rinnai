@@ -1,0 +1,23 @@
+{
+  "title": "Rinnai Heater",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Select the heater host and device name",
+        "name": "Name",
+        "host": "Host",
+        "scan_interval": "Scan Interval (seconds)"
+      }
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Select the heater host and device name",
+        "name": "Name",
+        "host": "Host",
+        "scan_interval": "Scan Interval (seconds)"
+      }
+    }
+  }
+}

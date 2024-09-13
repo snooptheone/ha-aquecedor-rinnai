@@ -1,0 +1,23 @@
+{
+  "title": "Aquecedor Rinnai",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Selecione o host do aquecedor",
+        "host": "Host",
+        "port": "Porta",
+        "scan_interval": "Intervalo de varredura (segundos)"
+      }
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Selecione o host do aquecedor",
+        "host": "Host",
+        "port": "Porta",
+        "scan_interval": "Intervalo de varredura (segundos)"
+      }
+    }
+  }
+}
