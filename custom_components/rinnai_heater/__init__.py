@@ -12,9 +12,7 @@ from homeassistant.helpers import device_registry as dr
 
 from .const import DEFAULT_SCAN_INTERVAL, DOMAIN, SENSORS_BUS_ARRAY, SENSORS_TELA_ARRAY
 
-# PLATFORMS = [Platform.SENSOR, Platform.BINARY_SENSOR,
-#              Platform.NUMBER, Platform.SELECT, Platform.SWITCH, Platform.BUTTON]
-PLATFORMS = [Platform.SENSOR, Platform.BINARY_SENSOR]
+PLATFORMS = [Platform.SENSOR, Platform.BINARY_SENSOR, Platform.BUTTON]
 _LOGGER = logging.getLogger(__name__)
 
 
@@ -30,7 +28,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
 
         heater = RinnaiHeater(hass, entry)
 
-        successReading = await heater.read_bus()
+        successReading = await heater.bus()
 
         if not successReading:
             raise ConfigEntryNotReady(f"Unable to fetch Rinnai device")
@@ -116,51 +114,64 @@ class RinnaiHeater:
 
     async def _async_refresh_data(self, now=None):
         try:
-            update_result = await self.read_bus()
+            await self.bus()
+            # await self.tela()
 
-            if update_result:
-                for update_callback in self._sensors:
-                    update_callback()
+            for update_callback in self._sensors:
+                update_callback()
         except Exception as e:
             _LOGGER.exception("error reading heater data", exc_info=True)
-            update_result = False
 
-        return update_result
+        return True
 
     def close(self):
         _LOGGER.info("closing http client")
         self._client.close()
 
-    async def read_bus(self):
+    async def request(self, endpoint: str):
         if self._reading:
             _LOGGER.warning(
-                "skipping fetching /bus data, previous read still in progress, make sure your scan interval is not too low")
+                f"skipping fetching /{endpoint} data, previous read still in progress, make sure your scan interval is not too low")
+            return None
+        else:
+            self._reading = True
+
+        _LOGGER.debug(f"requesting /{endpoint}")
+
+        async with self._lock:
+            try:
+                res = await self._client.get(f"http://{self._host}/{endpoint}")
+                read = await res.text()
+                return read.split(",")
+            except Exception as e:
+                _LOGGER.exception(
+                    f"Error fetching /{endpoint} data", exc_info=True)
+                return False
+            finally:
+                self._reading = False
+
+    async def inc(self):
+        return self.update_data(await self.request("inc"), False)
+
+    async def dec(self):
+        return self.update_data(await self.request("dec"), False)
+
+    async def lig(self):
+        return self.update_data(await self.request("lig"), False)
+
+    async def bus(self):
+        return self.update_data(await self.request("bus"), True)
+
+    async def tela(self):
+        return self.update_data(await self.request("tela_"), False)
+
+    def update_data(self, response: list[str], bus: bool):
+        if response is None:
             return False
-        self._reading = True
-        _LOGGER.debug("requesting /bus")
 
-        result = dict()
-        async with self._lock:
-            res = await self._client.get(f"http://{self._host}/bus")
-            read = await res.text()
-            values = read.split(",")
-            for address, name in SENSORS_BUS_ARRAY.items():
-                result[name] = values[address]
-            self.data = result
-            # log data
-            _LOGGER.debug("data: %s", self.data)
-
-        async with self._lock:
-            res = await self._client.get(f"http://{self._host}/tela_")
-            read = await res.text()
-            values = read.split(",")
-            for address, name in SENSORS_TELA_ARRAY.items():
-                result[name] = values[address]
-            self.data = result
-            # log data
-            _LOGGER.debug("data: %s", self.data)
-
-        self._reading = False
+        arr = SENSORS_BUS_ARRAY if bus else SENSORS_TELA_ARRAY
+        for address, name in arr.items():
+            self.data[name] = response[address]
 
         return True
 

@@ -6,7 +6,7 @@ from homeassistant.components.sensor import SensorEntity, EntityCategory
 from homeassistant.const import Platform
 from homeassistant.core import callback
 
-from .const import DOMAIN, SENSORS_BUS_ARRAY
+from .const import DOMAIN, SENSORS
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -15,7 +15,7 @@ async def async_setup_entry(hass, entry, async_add_entities):
     heater = hass.data[DOMAIN][entry.entry_id]
     entities = []
 
-    for sensor_info in SENSORS_BUS_ARRAY:
+    for sensor_info in SENSORS:
         if sensor_info.platform == Platform.SENSOR:
             sensor = RinnaiHeaterSensor(heater, sensor_info)
             entities.append(sensor)
