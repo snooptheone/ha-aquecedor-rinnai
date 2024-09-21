@@ -10,11 +10,11 @@ from homeassistant.helpers.event import async_track_time_interval
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers import device_registry as dr
 
-from .const import DEFAULT_SCAN_INTERVAL, DOMAIN, SENSORS_BUS_ARRAY
+from .const import DEFAULT_SCAN_INTERVAL, DOMAIN, SENSORS_BUS_ARRAY, SENSORS_TELA_ARRAY
 
 # PLATFORMS = [Platform.SENSOR, Platform.BINARY_SENSOR,
 #              Platform.NUMBER, Platform.SELECT, Platform.SWITCH, Platform.BUTTON]
-PLATFORMS = [Platform.SENSOR]
+PLATFORMS = [Platform.SENSOR, Platform.BINARY_SENSOR]
 _LOGGER = logging.getLogger(__name__)
 
 
@@ -139,13 +139,23 @@ class RinnaiHeater:
         self._reading = True
         _LOGGER.debug("requesting /bus")
 
+        result = dict()
         async with self._lock:
             res = await self._client.get(f"http://{self._host}/bus")
             read = await res.text()
             values = read.split(",")
-            result = dict()
-            for sensor_info in SENSORS_BUS_ARRAY:
-                result[sensor_info.name] = values[sensor_info.address]
+            for address, name in SENSORS_BUS_ARRAY.items():
+                result[name] = values[address]
+            self.data = result
+            # log data
+            _LOGGER.debug("data: %s", self.data)
+
+        async with self._lock:
+            res = await self._client.get(f"http://{self._host}/tela_")
+            read = await res.text()
+            values = read.split(",")
+            for address, name in SENSORS_TELA_ARRAY.items():
+                result[name] = values[address]
             self.data = result
             # log data
             _LOGGER.debug("data: %s", self.data)
