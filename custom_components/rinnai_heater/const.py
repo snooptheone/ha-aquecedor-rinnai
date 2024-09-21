@@ -15,9 +15,9 @@ ERROR = []
 
 SENSORS = [
     #      name                               coeff    unit         platform                       device_class                        enabled  icon                         options                  debug
-    Sensor("status",                          None,    None,        Platform.SENSOR,               None,                               True,    None,                        None,                    False),
+    Sensor("status",                          1,       None,        Platform.SENSOR,               None,                               True,    None,                        None,                    False),
     Sensor("flame",                           None,    None,        Platform.BINARY_SENSOR,        BinarySensorDeviceClass.POWER,      True,    "mdi:fire",                  None,                    False),
-    Sensor("error",                           None,    None,        Platform.SENSOR,               None,                               True,    "mdi:alert-circle",          None,                    False),
+    Sensor("error",                           1,       None,        Platform.SENSOR,               None,                               True,    "mdi:alert-circle",          None,                    False),
     Sensor("actuations",                      1,       None,        Platform.SENSOR,               None,                               True,    "mdi:shimmer",               None,                    False),
     Sensor("burning_hours",                   1,       "h",         Platform.SENSOR,               SensorDeviceClass.DURATION,         True,    "mdi:fire",                  None,                    False),
     Sensor("standby_hours",                   1,       "h",         Platform.SENSOR,               SensorDeviceClass.DURATION,         True,    "mdi:fire-off",              None,                    False),

@@ -12,7 +12,8 @@ from homeassistant.helpers import device_registry as dr
 
 from .const import DEFAULT_SCAN_INTERVAL, DOMAIN, SENSORS_BUS_ARRAY, SENSORS_TELA_ARRAY
 
-PLATFORMS = [Platform.SENSOR, Platform.BINARY_SENSOR, Platform.BUTTON]
+PLATFORMS = [Platform.SENSOR, Platform.BINARY_SENSOR,
+             Platform.BUTTON, Platform.WATER_HEATER]
 _LOGGER = logging.getLogger(__name__)
 
 

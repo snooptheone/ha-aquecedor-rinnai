@@ -54,7 +54,7 @@ class RinnaiHeaterBinarySensor(BinarySensorEntity):
     @property
     def is_on(self):
         if self._key in self._heater.data:
-            return self._heater.data[self._key] == 1
+            return self._heater.data[self._key] == "1"
 
     @property
     def device_info(self) -> Optional[Dict[str, Any]]:
