@@ -13,6 +13,25 @@ Sensor = namedtuple("Sensor", ["name", "coeff", "unit", "platform", "device_clas
 STATUS = []
 ERROR = []
 
+TEMPERATURES_MAP = {
+    "3": 3500,
+    "4": 3600,
+    "5": 3700,
+    "6": 3800,
+    "7": 3900,
+    "8": 4000,
+    "9": 4100,
+    "10": 4200,
+    "11": 4300,
+    "12": 4400,
+    "13": 4500,
+    "14": 4600,
+    "16": 4800,
+    "18": 5000,
+    "19": 5500,
+    "20": 6000,
+}
+
 SENSORS = [
     #      name                               coeff    unit         platform                       device_class                        enabled  icon                         options                  debug
     Sensor("status",                          1,       None,        Platform.SENSOR,               None,                               True,    None,                        None,                    False),

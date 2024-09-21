@@ -10,7 +10,7 @@ from homeassistant.helpers.event import async_track_time_interval
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers import device_registry as dr
 
-from .const import DEFAULT_SCAN_INTERVAL, DOMAIN, SENSORS_BUS_ARRAY, SENSORS_TELA_ARRAY
+from .const import DEFAULT_SCAN_INTERVAL, DOMAIN, SENSORS_BUS_ARRAY, SENSORS_TELA_ARRAY, TEMPERATURES_MAP
 
 PLATFORMS = [Platform.SENSOR, Platform.BINARY_SENSOR,
              Platform.BUTTON, Platform.WATER_HEATER]
@@ -117,9 +117,6 @@ class RinnaiHeater:
         try:
             await self.bus()
             # await self.tela()
-
-            for update_callback in self._sensors:
-                update_callback()
         except Exception as e:
             _LOGGER.exception("error reading heater data", exc_info=True)
 
@@ -166,13 +163,21 @@ class RinnaiHeater:
     async def tela(self):
         return self.update_data(await self.request("tela_"), False)
 
-    def update_data(self, response: list[str], bus: bool):
+    def update_data(self, response: list[str], bus: bool, update_entities=True):
         if response is None:
             return False
 
         arr = SENSORS_BUS_ARRAY if bus else SENSORS_TELA_ARRAY
+        _LOGGER.debug(f"updating data {arr}")
         for address, name in arr.items():
             self.data[name] = response[address]
+
+        if not bus:
+            self.data["target_temperature"] = TEMPERATURES_MAP[self.data["target_temperature_raw"]]
+
+        if update_entities:
+            for update_callback in self._sensors:
+                update_callback()
 
         return True
 
