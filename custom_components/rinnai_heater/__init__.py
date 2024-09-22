@@ -127,12 +127,12 @@ class RinnaiHeater:
         self._client.close()
 
     async def request(self, endpoint: str):
-        if self._reading:
-            _LOGGER.warning(
-                f"skipping fetching /{endpoint} data, previous read still in progress, make sure your scan interval is not too low")
-            return None
-        else:
-            self._reading = True
+        # if self._reading:
+        #     _LOGGER.warning(
+        #         f"skipping fetching /{endpoint} data, previous read still in progress, make sure your scan interval is not too low")
+        #     return None
+        # else:
+        #     self._reading = True
 
         _LOGGER.debug(f"requesting /{endpoint}")
 
@@ -168,7 +168,7 @@ class RinnaiHeater:
             return False
 
         arr = SENSORS_BUS_ARRAY if bus else SENSORS_TELA_ARRAY
-        _LOGGER.debug(f"updating data {arr}")
+
         for address, name in arr.items():
             self.data[name] = response[address]
 

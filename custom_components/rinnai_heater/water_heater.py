@@ -3,10 +3,10 @@ import re
 from typing import Any, Dict, Optional
 
 from homeassistant.components.water_heater import WaterHeaterEntity, WaterHeaterEntityFeature, STATE_GAS, STATE_OFF
-from homeassistant.const import TEMP_CELSIUS
+from homeassistant.const import TEMP_CELSIUS, PRECISION_WHOLE
 from homeassistant.core import callback
 
-from .const import DOMAIN
+from .const import DOMAIN, TEMPERATURES_MAP
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -47,7 +47,7 @@ class RinnaiHeaterWaterHeater(WaterHeaterEntity):
 
     @callback
     def _heater_data_updated(self):
-        self.async_write_ha_state()
+        self.schedule_update_ha_state()
 
     @property
     def current_temperature(self):
@@ -67,9 +67,30 @@ class RinnaiHeaterWaterHeater(WaterHeaterEntity):
     def current_operation(self):
         return STATE_GAS if self.is_on else STATE_OFF
 
-    async def async_set_temperature(self):
-        pass
-        # await self._heater.dec()
+    async def async_set_temperature(self, **kwargs: Any):
+        _LOGGER.debug(f"async_set_temperature: {kwargs}")
+
+        temperature = kwargs.get("temperature") * 100
+
+        nearest_temperature = min(
+            TEMPERATURES_MAP.values(), key=lambda x: abs(x - temperature))
+        nearest_temperature_index = list(
+            TEMPERATURES_MAP.values()).index(nearest_temperature)
+
+        current_temperature = self.target_temperature * 100
+        current_temperature_index = list(
+            TEMPERATURES_MAP.values()).index(current_temperature)
+
+        steps = nearest_temperature_index - current_temperature_index
+
+        _LOGGER.debug(f"async_set_temperature: {temperature} -> {nearest_temperature}/{
+                      nearest_temperature_index} - {current_temperature}/{current_temperature_index} - {steps}")
+
+        for i in range(abs(steps)):
+            if steps > 0:
+                await self._heater.inc()
+            else:
+                await self._heater.dec()
 
     async def async_set_operation_mode(self, mode):
         if mode == STATE_GAS:
