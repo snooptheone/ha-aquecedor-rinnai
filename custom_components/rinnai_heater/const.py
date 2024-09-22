@@ -52,11 +52,11 @@ SENSORS = [
     Sensor("target_temperature",              0.01,    "°C",        Platform.SENSOR,               SensorDeviceClass.TEMPERATURE,      True,    "mdi:water-thermometer",     None,                    False),
     Sensor("device_ip",                       None,    None,        Platform.SENSOR,               None,                               True,    "mdi:ip-network",            None,                    True ),
     Sensor("device_ip_priority",              None,    None,        Platform.SENSOR,               None,                               True,    "mdi:ip-network",            None,                    True ),
-    Sensor("target_temperature_raw",          None,    None,        Platform.SENSOR,               None,                               True,    "mdi:water-thermometer",     None,                    True ),
+    Sensor("target_temperature_raw",          1,       None,        Platform.SENSOR,               None,                               True,    "mdi:water-thermometer",     None,                    True ),
     Sensor("serial_number",                   None,    None,        Platform.SENSOR,               None,                               True,    None,                        None,                    True ),
-    Sensor("uptime",                          None,    "s",         Platform.SENSOR,               SensorDeviceClass.DURATION,         True,    None,                        None,                    False),
+    Sensor("uptime",                          1,       "s",         Platform.SENSOR,               SensorDeviceClass.DURATION,         True,    None,                        None,                    False),
     Sensor("mac_address",                     None,    None,        Platform.SENSOR,               None,                               True,    "mdi:network",               None,                    True ),
-    Sensor("wifi_signal",                     None,    "dB",        Platform.SENSOR,               SensorDeviceClass.SIGNAL_STRENGTH,  True,    None,                        None,                    True ),
+    Sensor("wifi_signal",                     1,       "dB",        Platform.SENSOR,               SensorDeviceClass.SIGNAL_STRENGTH,  True,    None,                        None,                    True ),
 ]
 
 SENSORS_BUS_ARRAY = {

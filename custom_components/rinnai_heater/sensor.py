@@ -2,7 +2,7 @@ import logging
 import re
 from typing import Any, Dict, Optional
 
-from homeassistant.components.sensor import SensorEntity, EntityCategory
+from homeassistant.components.sensor import SensorEntity, EntityCategory, SensorStateClass
 from homeassistant.const import Platform
 from homeassistant.core import callback
 
@@ -41,6 +41,11 @@ class RinnaiHeaterSensor(SensorEntity):
         self._attr_icon = sensor_info.icon
         self._attr_options = sensor_info.options
         self._attr_entity_category = EntityCategory.DIAGNOSTIC if sensor_info.debug else None
+
+        if self._coeff is not None:
+            self._attr_state_class = SensorStateClass.MEASUREMENT
+            self._attr_suggested_display_precision = str(
+                self._coeff).count('0')
 
     async def async_added_to_hass(self):
         self._heater.async_add_rinnai_heater_sensor(
