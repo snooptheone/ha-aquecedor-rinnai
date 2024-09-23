@@ -40,10 +40,10 @@ SENSORS = [
     Sensor("actuations",                      1,       None,        Platform.SENSOR,               None,                               True,    "mdi:shimmer",               None,                    False),
     Sensor("burning_hours",                   1,       "h",         Platform.SENSOR,               SensorDeviceClass.DURATION,         True,    "mdi:fire",                  None,                    False),
     Sensor("standby_hours",                   1,       "h",         Platform.SENSOR,               SensorDeviceClass.DURATION,         True,    "mdi:fire-off",              None,                    False),
-    Sensor("fan_diagnostic",                  0.1,     None,        Platform.SENSOR,               None,                               True,    "mdi:fan",                   None,                    True ),
+    Sensor("fan_diagnostic",                  0.1,     None,        Platform.SENSOR,               None,                               False,   "mdi:fan",                   None,                    True ),
     Sensor("fan_speed",                       0.1,     "Hz",        Platform.SENSOR,               SensorDeviceClass.FREQUENCY,        True,    "mdi:fan",                   None,                    False),
     Sensor("pov_current",                     0.1,     "mA",        Platform.SENSOR,               SensorDeviceClass.CURRENT,          True,    "mdi:current-ac",            None,                    False),
-    Sensor("power",                           0.01,    "kcal/min",  Platform.SENSOR,               SensorDeviceClass.ENERGY,           True,    "mdi:gas-burner",            None,                    False),
+    Sensor("power",                           0.01,    "kcal/min",  Platform.SENSOR,               SensorDeviceClass.POWER,            True,    "mdi:gas-burner",            None,                    False),
     Sensor("water_inlet_temperature",         0.01,    "°C",        Platform.SENSOR,               SensorDeviceClass.TEMPERATURE,      True,    "mdi:thermometer-water",     None,                    False),
     Sensor("water_outlet_temperature",        0.01,    "°C",        Platform.SENSOR,               SensorDeviceClass.TEMPERATURE,      True,    "mdi:thermometer-water",     None,                    False),
     Sensor("water_flow",                      0.01,    "L/min",     Platform.SENSOR,               SensorDeviceClass.VOLUME_FLOW_RATE, True,    "mdi:water",                 None,                    False),
@@ -52,11 +52,16 @@ SENSORS = [
     Sensor("target_temperature",              0.01,    "°C",        Platform.SENSOR,               SensorDeviceClass.TEMPERATURE,      True,    "mdi:water-thermometer",     None,                    False),
     Sensor("device_ip",                       None,    None,        Platform.SENSOR,               None,                               True,    "mdi:ip-network",            None,                    True ),
     Sensor("device_ip_priority",              None,    None,        Platform.SENSOR,               None,                               True,    "mdi:ip-network",            None,                    True ),
-    Sensor("target_temperature_raw",          1,       None,        Platform.SENSOR,               None,                               True,    "mdi:water-thermometer",     None,                    True ),
-    Sensor("serial_number",                   None,    None,        Platform.SENSOR,               None,                               True,    None,                        None,                    True ),
-    Sensor("uptime",                          1,       "s",         Platform.SENSOR,               SensorDeviceClass.DURATION,         True,    None,                        None,                    False),
-    Sensor("mac_address",                     None,    None,        Platform.SENSOR,               None,                               True,    "mdi:network",               None,                    True ),
+    Sensor("target_temperature_raw",          1,       None,        Platform.SENSOR,               None,                               False,   "mdi:water-thermometer",     None,                    True ),
+    Sensor("serial_number",                   None,    None,        Platform.SENSOR,               None,                               False,   None,                        None,                    True ),
+    Sensor("uptime",                          1,       "s",         Platform.SENSOR,               SensorDeviceClass.DURATION,         False,   None,                        None,                    False),
+    Sensor("mac_address",                     None,    None,        Platform.SENSOR,               None,                               False,   "mdi:network",               None,                    True ),
     Sensor("wifi_signal",                     1,       "dB",        Platform.SENSOR,               SensorDeviceClass.SIGNAL_STRENGTH,  True,    None,                        None,                    True ),
+
+    Sensor("water_usage",                     1,       "L",         Platform.SENSOR,               SensorDeviceClass.WATER,            True,    None,                        None,                    False),
+    Sensor("gas_usage",                       1,       "kcal",      Platform.SENSOR,               SensorDeviceClass.ENERGY,           True,    "mdi:meter-gas",             None,                    False),
+    Sensor("water_usage_last_week",           1,       "L",         Platform.SENSOR,               SensorDeviceClass.WATER,            True,    None,                        None,                    False),
+    Sensor("gas_usage_last_week",             1,       "kcal",      Platform.SENSOR,               SensorDeviceClass.ENERGY,           True,    "mdi:meter-gas",             None,                    False),
 ]
 
 SENSORS_BUS_ARRAY = {
@@ -93,4 +98,11 @@ SENSORS_TELA_ARRAY = {
     6: "device_ip_priority",
     7: "target_temperature_raw",
     8: "uptime",
+}
+
+SENSORS_CONSUMO_ARRAY = {
+    1: "water_usage",
+    2: "gas_usage",
+    4: "water_usage_last_week",
+    5: "gas_usage_last_week",
 }

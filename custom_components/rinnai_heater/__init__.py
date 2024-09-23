@@ -10,7 +10,7 @@ from homeassistant.helpers.event import async_track_time_interval
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers import device_registry as dr
 
-from .const import DEFAULT_SCAN_INTERVAL, DOMAIN, SENSORS_BUS_ARRAY, SENSORS_TELA_ARRAY, TEMPERATURES_MAP
+from .const import DEFAULT_SCAN_INTERVAL, DOMAIN, SENSORS_BUS_ARRAY, SENSORS_TELA_ARRAY, SENSORS_CONSUMO_ARRAY
 
 PLATFORMS = [Platform.SENSOR, Platform.BINARY_SENSOR,
              Platform.BUTTON, Platform.WATER_HEATER]
@@ -116,6 +116,8 @@ class RinnaiHeater:
     async def _async_refresh_data(self, now=None):
         try:
             await self.bus()
+            await self.consumo()
+            await self.tela()
             # await self.tela()
         except Exception as e:
             _LOGGER.exception("error reading heater data", exc_info=True)
@@ -144,36 +146,35 @@ class RinnaiHeater:
             except Exception as e:
                 _LOGGER.exception(
                     f"Error fetching /{endpoint} data", exc_info=True)
+                self.data = dict()  # clear data on error so entities become unavailable
                 return False
             finally:
                 self._reading = False
 
     async def inc(self):
-        return self.update_data(await self.request("inc"), False)
+        return self.update_data(await self.request("inc"), SENSORS_TELA_ARRAY)
 
     async def dec(self):
-        return self.update_data(await self.request("dec"), False)
+        return self.update_data(await self.request("dec"), SENSORS_TELA_ARRAY)
 
     async def lig(self):
-        return self.update_data(await self.request("lig"), False)
+        return self.update_data(await self.request("lig"), SENSORS_TELA_ARRAY)
 
     async def bus(self):
-        return self.update_data(await self.request("bus"), True)
+        return self.update_data(await self.request("bus"), SENSORS_BUS_ARRAY)
 
     async def tela(self):
-        return self.update_data(await self.request("tela_"), False)
+        return self.update_data(await self.request("tela_"), SENSORS_TELA_ARRAY)
 
-    def update_data(self, response: list[str], bus: bool, update_entities=True):
+    async def consumo(self):
+        return self.update_data(await self.request("consumo"), SENSORS_CONSUMO_ARRAY)
+
+    def update_data(self, response: list[str], sensors: dict[int, str], update_entities=True):
         if response is None:
             return False
 
-        arr = SENSORS_BUS_ARRAY if bus else SENSORS_TELA_ARRAY
-
-        for address, name in arr.items():
+        for address, name in sensors.items():
             self.data[name] = response[address]
-
-        if not bus:
-            self.data["target_temperature"] = TEMPERATURES_MAP[self.data["target_temperature_raw"]]
 
         if update_entities:
             for update_callback in self._sensors:

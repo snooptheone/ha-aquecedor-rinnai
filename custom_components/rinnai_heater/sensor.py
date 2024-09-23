@@ -2,7 +2,7 @@ import logging
 import re
 from typing import Any, Dict, Optional
 
-from homeassistant.components.sensor import SensorEntity, EntityCategory, SensorStateClass
+from homeassistant.components.sensor import SensorEntity, EntityCategory, SensorStateClass, SensorDeviceClass
 from homeassistant.const import Platform
 from homeassistant.core import callback
 
@@ -43,7 +43,10 @@ class RinnaiHeaterSensor(SensorEntity):
         self._attr_entity_category = EntityCategory.DIAGNOSTIC if sensor_info.debug else None
 
         if self._coeff is not None:
-            self._attr_state_class = SensorStateClass.MEASUREMENT
+            if self._attr_device_class == SensorDeviceClass.WATER or self._attr_device_class == SensorDeviceClass.ENERGY:
+                self._attr_state_class = SensorStateClass.TOTAL_INCREASING
+            else:
+                self._attr_state_class = SensorStateClass.MEASUREMENT
             self._attr_suggested_display_precision = str(
                 self._coeff).count('0')
 
