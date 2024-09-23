@@ -56,8 +56,8 @@ class RinnaiHeaterWaterHeater(WaterHeaterEntity):
 
     @property
     def target_temperature(self):
-        if "target_temperature" in self._heater.data:
-            return float(self._heater.data["target_temperature"]) * 0.01
+        if "target_temperature_raw" in self._heater.data:
+            return TEMPERATURES_MAP[self._heater.data["target_temperature_raw"]] * 0.01
 
     @property
     def is_on(self):
