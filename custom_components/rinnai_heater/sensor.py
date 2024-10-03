@@ -27,12 +27,13 @@ async def async_setup_entry(hass, entry, async_add_entities):
 class RinnaiHeaterSensor(SensorEntity):
     def __init__(self, heater, sensor_info):
         """Initialize the sensor."""
+        _LOGGER.debug(f"RinnaiHeaterSensor: {sensor_info}, {heater}")
         self._heater = heater
         self._key = sensor_info.name
         self._coeff = sensor_info.coeff
 
         self._attr_has_entity_name = True
-        self._attr_unique_id = self._key
+        self._attr_unique_id = self._key + heater._serial_number
         self._attr_name = re.sub(
             r'(?<=[a-z])(?=[A-Z])', ' ', self._key).capitalize()
         self._attr_native_unit_of_measurement = sensor_info.unit

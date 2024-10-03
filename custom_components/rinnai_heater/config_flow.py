@@ -3,6 +3,7 @@ from collections.abc import Mapping
 
 import voluptuous as vol
 from typing import Any
+from homeassistant.core import callback
 from homeassistant.helpers.schema_config_entry_flow import (
     SchemaConfigFlowHandler,
     SchemaFlowFormStep,
@@ -32,6 +33,11 @@ class RinnaiHeaterConfigFlow(SchemaConfigFlowHandler, domain=DOMAIN):
     config_flow = CONFIG_FLOW
     options_flow = OPTIONS_FLOW
 
+    # _LOGGER.debug("RinnaiHeaterConfigFlow")
+
+    @callback
     def async_config_entry_title(self, options: Mapping[str, Any]) -> str:
         """Return config entry title."""
-        return "Rinnai Heater"
+        _LOGGER.debug("async_config_entry_title: %s", options)
+        msg = f"Rinnai Heater ({options['name']})"
+        return msg

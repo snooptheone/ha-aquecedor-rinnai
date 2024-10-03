@@ -31,7 +31,7 @@ class RinnaiHeaterBinarySensor(BinarySensorEntity):
         self._key = sensor_info.name
 
         self._attr_has_entity_name = True
-        self._attr_unique_id = self._key
+        self._attr_unique_id = self._key + heater._serial_number
         self._attr_name = re.sub(
             r'(?<=[a-z])(?=[A-Z])', ' ', self._key).capitalize()
         self._attr_device_class = sensor_info.device_class

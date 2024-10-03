@@ -28,9 +28,9 @@ class RinnaiHeaterIncButton(ButtonEntity):
         self._heater = heater
 
         self._attr_has_entity_name = True
-        self._attr_unique_id = "temperature_increase"
+        self._attr_unique_id = "temperature_increase" + heater._serial_number
         self._attr_name = re.sub(
-            r'(?<=[a-z])(?=[A-Z])', ' ', self._attr_unique_id).capitalize()
+            r'(?<=[a-z])(?=[A-Z])', ' ', "temperature_increase").capitalize()
         self._attr_icon = "mdi:thermometer-chevron-up"
 
     async def async_press(self):
@@ -50,9 +50,9 @@ class RinnaiHeaterDecButton(ButtonEntity):
         self._heater = heater
 
         self._attr_has_entity_name = True
-        self._attr_unique_id = "temperature_decrease"
+        self._attr_unique_id = "temperature_decrease" + heater._serial_number
         self._attr_name = re.sub(
-            r'(?<=[a-z])(?=[A-Z])', ' ', self._attr_unique_id).capitalize()
+            r'(?<=[a-z])(?=[A-Z])', ' ', "temperature_decrease").capitalize()
         self._attr_icon = "mdi:thermometer-chevron-down"
 
     async def async_press(self):

@@ -18,6 +18,7 @@ _LOGGER = logging.getLogger(__name__)
 
 
 async def async_setup(hass, config):
+    _LOGGER.debug("async_setup: %s", config)
     hass.data[DOMAIN] = {}
     # Return boolean to indicate that initialization was successful.
     return True
@@ -30,16 +31,27 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
         heater = RinnaiHeater(hass, entry)
 
         successReading = await heater.bus()
-
+        # _LOGGER.debug(
+        #     f"mac_address: {heater._mac_address}, serial_number: {
+        #         heater._serial_number}\n"
+        #     f"successReading: {successReading}\n"
+        #     f"heater.data: {heater.data}\n"
+        #     f"entry: {entry}\n"
+        # )
         if not successReading:
             raise ConfigEntryNotReady(f"Unable to fetch Rinnai device")
-
+        heater._serial_number = heater.data["serial_number"]
+        # call async_set_unique_id(heater._serial_number) to set unique_id
+        hass.config_entries.async_update_entry(
+            entry, unique_id=heater._serial_number)
         hass.data[DOMAIN][entry.entry_id] = heater
+        _LOGGER.debug(f"entry: {entry}")
 
-        for component in PLATFORMS:
-            hass.async_create_task(
-                hass.config_entries.async_forward_entry_setup(entry, component)
-            )
+        # for component in PLATFORMS:
+        #     hass.async_create_task(
+        #         hass.config_entries.async_forward_entry_setup(entry, component)
+        #     )
+        await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
 
         return True
     except ConfigEntryNotReady as ex:
@@ -92,6 +104,8 @@ class RinnaiHeater:
         self._name = entry.options["name"]
 
         self.data = dict()
+        self._mac_address = None
+        self._serial_number = None
 
     @callback
     def async_add_rinnai_heater_sensor(self, update_callback):
@@ -142,6 +156,7 @@ class RinnaiHeater:
             try:
                 res = await self._client.get(f"http://{self._host}/{endpoint}")
                 read = await res.text()
+                _LOGGER.debug(f"response: {read}")
                 return read.split(",")
             except Exception as e:
                 _LOGGER.exception(
