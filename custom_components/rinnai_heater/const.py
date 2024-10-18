@@ -1,14 +1,28 @@
-from collections import namedtuple
+"""Constants and sensor definitions for the Rinnai Heater integration."""
 
-from homeassistant.components.sensor import SensorDeviceClass
+from typing import NamedTuple
+
 from homeassistant.components.binary_sensor import BinarySensorDeviceClass
+from homeassistant.components.sensor.const import SensorDeviceClass
 from homeassistant.const import Platform
 
 DOMAIN = "rinnai_heater"
 
 DEFAULT_SCAN_INTERVAL = 15
 
-Sensor = namedtuple("Sensor", ["name", "coeff", "unit", "platform", "device_class", "enabled", "icon", "options", "debug"])
+class Sensor(NamedTuple):
+    """Represents a sensor with various attributes."""
+
+    name: str
+    coeff: float|None
+    unit: str|None
+    platform: Platform
+    device_class: BinarySensorDeviceClass | SensorDeviceClass | None
+    enabled: bool
+    icon: str|None
+    options: list[str]|None
+    debug: bool|None
+
 
 STATUS = []
 ERROR = []
